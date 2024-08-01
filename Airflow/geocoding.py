@@ -64,7 +64,7 @@ async def main(tdata_json):
 # 비동기 함수 실행
 if __name__ == "__main__":
     start = time.time()
-    addresses_json = await (main(tdata_json))  # 일반 스크립트에서 사용
+    addresses_json = asyncio.run(main(tdata_json))  # 일반 스크립트에서 사용
     end = time.time()
     print(json.loads(addresses_json))  # 최종 결과 출력
     print(f'{end-start} sec')
