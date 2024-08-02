@@ -250,6 +250,8 @@ airflow dags list-runs -d <dag_id>
 
 실행 시간: 약 50-60초
 
+<img width="251" alt="Synchronous" src="https://github.com/user-attachments/assets/8e5426a3-f8fa-4303-b341-e1427793e647">
+
 단점: 순차 처리로 인해 대량의 API 호출을 처리하기 비효율적입니다.
 
 ### 비동기 방식
@@ -257,9 +259,15 @@ airflow dags list-runs -d <dag_id>
 
 실행 시간: 약 5초
 
+<img width="250" alt="Asynchronous" src="https://github.com/user-attachments/assets/15833b5d-b2c8-47c7-a2e9-b0705505c760">
+
 장점: 병렬 처리를 통해 대량의 API 호출을 효율적으로 처리할 수 있습니다.
 
 ### 결론
-대규모 API 호출을 처리할 때는 aiohttp와 asyncio를 활용한 비동기 처리가 동기 처리에 비해 훨씬 효율적입니다. 
+대규모 API 호출을 처리할 때는 aiohttp와 asyncio를 활용한 비동기 처리가 동기 처리에 비해 훨씬 효율적입니다.
 
-비동기 처리를 통해 전체 처리 시간을 크게 줄일 수 있으며, 성능을 향상시킬 수 있습니다.
+비동기 처리시, API 서버에 응답 시간에 따라 delay를 주어야 하는 경우도 고려해야 합니다.
+
+짧은 시간동안 많은 요청을 할 시 정상적인 응답을 못 받는 경우가 있습니다.
+
+해당 고려사항들에 대한 조치를 할 경우, 비동기 처리를 통해 전체 처리 시간을 크게 줄일 수 있습니다. 그리고 성능을 향상시킬 수 있습니다.
