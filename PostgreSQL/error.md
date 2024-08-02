@@ -16,7 +16,7 @@ psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" 
     Aug 02 02:54:49 server05 systemd[1]: Starting postgresql.service - PostgreSQL RDBMS...
     Aug 02 02:54:49 server05 systemd[1]: Finished postgresql.service - PostgreSQL RDBMS.
     ~~~
-    이렇게 나오는데 상태 옆에 있는 경로에 들어가서
+    이렇게 나오는데 Loaded 옆에 있는 경로에 들어가서
     ~~~
     [Unit]
     Description=PostgreSQL RDBMS
