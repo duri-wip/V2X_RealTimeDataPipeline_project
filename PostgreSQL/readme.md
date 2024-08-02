@@ -61,14 +61,14 @@ PostgreSQL에서 replication slot은 스탠바이 서버가 메인 서버로부�
    먼저, 현재 설정된 replication slot을 확인해야 합니다. 이는 메인 서버에서 psql을 사용하여 확인할 수 있습니다.
    
 
-   SELECT * FROM pg_replication_slots;
+   - SELECT * FROM pg_replication_slots;
    
    이 명령어를 실행하면 현재 설정된 replication slot의 목록을 볼 수 있습니다.
 2. **replication slot 삭제**
    더 이상 필요하지 않은 replication slot을 확인했다면, 해당 slot을 삭제할 수 있습니다. 이 작업 역시 메인 서버에서 수행합니다.
    
 
-   SELECT pg_drop_replication_slot('slot_name');
+   - SELECT pg_drop_replication_slot('slot_name');
    
    여기서 'slot_name'은 삭제하고자 하는 replication slot의 이름입니다. 이 명령어를 실행하면 해당 replication slot이 삭제됩니다.
 ### 주의사항
