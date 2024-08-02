@@ -21,7 +21,7 @@ PostgreSQL 이중화 작업은 데이터베이스의 안정성과 가용성을 �
       - sudo chmod 700 아카이브 파일 경로
     - 이 명령어는 /home/ubuntu 디렉토리의 소유권을 postgres 사용자와 그룹에게 부여하고, 소유자만 읽기, 쓰기,          실행 권한을 가지도록 설정합니다.
 - **pg_hba.conf 수정**: 메인 서버의 pg_hba.conf 파일을 열고, 스탠바이 서버의 접속을 허용하는 규칙을 추가합니다.
-  - 예: host replication all 스탠바이_서버_IP/32 trust
+  - 예: host replication all 스탠바이_서버_IP/32 md5
 - **서버 재시작**: 설정을 수정했으면 postgresql을 재시작 한다.
 ### 4단계: 스탠바이 서버 설정
 - **postgresql.conf 수정**: 메인 서버의 postgresql.conf 파일을 열고, 다음 설정을 추가하거나 수정합니다.
