@@ -40,6 +40,6 @@ _Hadoop Cluster Architecture_
     - `/user` : HDFS user 관련 데이터가 저장되는 디렉터리
         - `/ubuntu/.Trash` : HDFS에서 파일 삭제 시, 설정 기간동안 보관 후 삭제되는 휴지통 디렉터리 (설정값: `fs.trash.interval` = 1440[분, = 24시간])
 
-![Hadoop HDFS Structure|500](https://i.imgur.com/3TjCld0.png)
+![Hadoop HDFS Structure|450](https://i.imgur.com/3TjCld0.png)
 
 _Hadoop HDFS Structure_
