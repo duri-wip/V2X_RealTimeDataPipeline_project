@@ -26,7 +26,9 @@
     - 고가용성 보장을 위한 3개의 DataNode 구성
         - 각 데이터 블록의 복제본 수: 2(`dfs.replication` 옵션값 = 2)
 ![Hadoop Cluster Architecture|700](https://i.imgur.com/X6vszoQ.png)
+
 _Hadoop Cluster Architecture_
+
 # Hadoop HDFS Structure
 
 - Hadoop cluster 내 HDFS 디렉터리 구조
@@ -39,4 +41,5 @@ _Hadoop Cluster Architecture_
         - `/ubuntu/.Trash` : HDFS에서 파일 삭제 시, 설정 기간동안 보관 후 삭제되는 휴지통 디렉터리 (설정값: `fs.trash.interval` = 1440[분, = 24시간])
 
 ![Hadoop HDFS Structure|500](https://i.imgur.com/3TjCld0.png)
+
 _Hadoop HDFS Structure_
