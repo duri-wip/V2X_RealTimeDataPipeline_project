@@ -18,9 +18,9 @@ Kafka를 시작하려면 다음 단계를 따르세요:
 ### 설치
 1. **Kafka 다운로드**:
     ```bash
-    wget https://downloads.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz
-    tar -xzf kafka_2.13-3.0.0.tgz
-    cd kafka_2.13-3.0.0
+    wget https://downloads.apache.org/kafka/3.5.2/kafka_2.13-3.5.2.tgz
+    tar -xzf kafka_2.13-3.5.2.tgz
+    cd kafka_2.13-3.5.2
     ```
 
 2. **ZooKeeper 시작**:
@@ -48,11 +48,11 @@ Kafka 설정은 `config/server.properties` 파일을 편집하여 사용자 정�
 
 - **ZooKeeper 연결**:
     ```properties
-    zookeeper.connect=localhost:2181
+    zookeeper.connect=server01:2181,server02:2181,server03:2181
     ```
 
 ## 사용법
 ### 토픽 생성
 `my-topic`이라는 Kafka 토픽을 생성하려면:
 ```bash
-bin/kafka-topics.sh --create --topic my-topic --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1
+bin/kafka-topics.sh --create --topic my-topic --bootstrap-server server01:9092,server02:9092,server03:9092 --replication-factor 1 --partitions 1
