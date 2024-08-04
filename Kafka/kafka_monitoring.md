@@ -2,14 +2,24 @@
 
 - JMX API를 통한 metrics 출력 및 Grafana를 이용한 모니터링 대시보드 구현
 	1. Kafka와 Zookeeper
-		- Kafka와 Zookeeper 
+		- Kafka와 Zookeeper의 환경설정을 통한 metrics의 JMX 출력 활성화
 	2. JMX Exporter
 		- 버전: 1.0.1
+  		- Java 애플리케이션 모니터링: JMX Exporter는 Java 애플리케이션의 내부 상태를 모니터링할 수 있도록 JMX(Java Management Extensions) 메트릭을 Prometheus 형식으로 변환하여 JVM 모니터링이 용이
+   	        - 설정 파일을 통해 필요한 메트릭만 선택적으로 수집할 수 있어 메트릭을 유연하게 구성 가능
+                - Java 애플리케이션과 쉽게 통합될 수 있어, 기존 시스템에 큰 변경 없이 모니터링을 구현할 수 있음
 	1. Prometheus
 		- 버전: 2.29.1
+  		- 시계열 데이터베이스: 시계열 데이터를 저장하고 관리하는 데 최적화된 데이터베이스이므로 모니터링 데이터를 효율적으로 저장하고 쿼리할 수 있음
+   	        - 다양한 메트릭 수집 가능: 다양한 방법으로 메트릭을 수집할 수 있음. Pull 모델을 사용하여 설정된 간격으로 메트릭을 수집함으로써 실시간 모니터링 가능
+                - 자체 쿼리 언어인 PromQL을 제공하여 복잡한 데이터 분석 및 대시보드 생성이 용이함
+
 	2. Grafana
 		- 버전: 8.1.3
-
+  		- 강력한 시각화 기능: 다양한 차트와 그래프 유형을 제공하여 데이터를 시각적으로 표시하기 쉽고, 이를 통해 복잡한 메트릭을 쉽게 분석 가능함
+   	        - 대시보드 공유 및 관리: 대시보드 생성, 공유, 관리가 용이하여 팀 내에서 일관된 모니터링 환경을 구축할 수 있음
+                - 복수의 데이터 소스 통합: Prometheus 외에도 다양한 데이터 소스를 통합할 수 있어 여러 시스템의 데이터를 한 곳에서 시각화할 수 있음
+- JMX Exporter, Prometheus, Grafana 모두 오픈소스 프로젝트로 무료로 사용 가능하며, 커뮤니티 지원이 활발한 편으로 대시보드 구성 Application으로 채택
 - 전체 대시보드([링크](http://13.125.191.32:3000/d/JtWBzWAiz/kafka-cluster-monitoring-dashboard?orgId=1&refresh=5s&from=1722743108980&to=1722744908980))
 	- Kafka cluster monitoring: 카프카 클러스터 관련 지표 모니터링
 	- Zookeeper monitoring: 주키퍼 관련 지표 모니터링
