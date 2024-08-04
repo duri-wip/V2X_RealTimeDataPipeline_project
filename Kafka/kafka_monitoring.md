@@ -1,4 +1,4 @@
-# Dashboard 구현방식
+# Kafka cluster monitoring dashboard 구현방식
 
 - JMX API를 통한 metrics 출력 및 Grafana를 이용한 모니터링 대시보드 구현
 	1. Kafka와 Zookeeper
