@@ -1,9 +1,11 @@
-# spark
-
-api -> airflow -> kafka -> spark -> postgres, HDFS
-prometheus -> grafana
-
 # 스파크
+
+### 스파크 등장 배경
+
+- 2005년 하드웨어의 성능 향상이 중단
+- 기존의 단일 프로세서로 구동되던 애플리케이션은 느려지기 시작
+- 병렬 처리가 필요하게 됨
+- 결과적으로 데이터 수집 비용은 극히 저렴해졌으나 데이터는 클러스터에서 처리해야 할만큼 거대해짐.
 
 ### 스파크 스트럭트 스트림이란
 
@@ -149,7 +151,7 @@ carinfo_schema = StructType([
 
 스파크 세션 만들기
 
-````python
+```python
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark_consumer_schema import carinfo_schema
@@ -157,13 +159,15 @@ from pyspark_consumer_schema import carinfo_schema
 spark = SparkSession.builder.appName("test_topic_streaming") \
     .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,org.postgresql:postgresql:42.7.3") \
     .getOrCreate()
-```python
+```
 
 info 레벨의 로그를 출력하기.
+
 스파크 애플리케이션의 로그 레벨을 "INFO"로 설정해 디버깅 목적으로 로그 메시지를 확인하는 경우를 대비한다.
+
 ```python
 spark.sparkContext.setLogLevel("INFO")
-````
+```
 
 ## 2. 받아온 데이터를 콘솔에 출력하기
 
