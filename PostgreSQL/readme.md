@@ -32,11 +32,11 @@ PostgreSQL 이중화 작업은 데이터베이스의 안정성과 가용성을 �
 - **메인 서버 비우기**: 메인 서버를 비우고 그 자리에 복제 데이터가 넘어오게 한다.
   - rm -rf /var/lib/postgresql/16/main/*
 - **메인 서버 데이터 복제**: 스탠바이 서버에서 메인 서버의 데이터를 복제합니다. 이 작업은 pg_basebackup 명령어를 사용하여 수행할 수 있습니다.
-  - 예: pg_basebackup -h 172.31.10.1 -D /var/lib/postgresql/16/main -U 유저이름 -P --wal-method=stream
+  - 예: pg_basebackup -h 메인서버IP -D /var/lib/postgresql/16/main -U 유저이름 -P --wal-method=stream
 - **standby.signal 생성**: 복제가 완료된 후, 스탠바이 서버의 PostgreSQL 데이터 디렉토리 내에 standby.signal 파일을 생성하고, 다음 설정을 추가합니다.
   - vim /var/lib/postgresql/16/main/standby.signal 
   - primary_conninfo = 'host=메인_서버_IP port=5432 user=유저이름 password=비밀번호'
-  - trigger_file = '/tmp/postgresql.trigger.5432'
+  - trigger_file = '/tmp/postgresql.trigger'
 ### 5단계: 서비스 시작 및 확인
 - **PostgreSQL 서비스 시작**: 메인 서버와 스탠바이 서버에서 PostgreSQL 서비스를 시작합니다.
   - sudo systemctl start postgresql
@@ -60,13 +60,11 @@ PostgreSQL에서 replication slot은 스탠바이 서버가 메인 서버로부�
 1. **현재 설정된 replication slot 확인**
    먼저, 현재 설정된 replication slot을 확인해야 합니다. 이는 메인 서버에서 psql을 사용하여 확인할 수 있습니다.
    
-
    - SELECT * FROM pg_replication_slots;
    
    이 명령어를 실행하면 현재 설정된 replication slot의 목록을 볼 수 있습니다.
 2. **replication slot 삭제**
    더 이상 필요하지 않은 replication slot을 확인했다면, 해당 slot을 삭제할 수 있습니다. 이 작업 역시 메인 서버에서 수행합니다.
-   
 
    - SELECT pg_drop_replication_slot('slot_name');
    
