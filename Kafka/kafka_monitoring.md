@@ -10,7 +10,7 @@
 	2. Grafana
 		- 버전: 8.1.3
 
-- 전체 대시보드
+- 전체 대시보드([링크](http://13.125.191.32:3000/d/JtWBzWAiz/kafka-cluster-monitoring-dashboard?orgId=1&refresh=5s&from=1722743108980&to=1722744908980))
 	- Kafka cluster monitoring: 카프카 클러스터 관련 지표 모니터링
 	- Zookeeper monitoring: 주키퍼 관련 지표 모니터링
 	- JVM monitoring: 자바 가상 머신(JVM) 관련 지표 모니터링링
