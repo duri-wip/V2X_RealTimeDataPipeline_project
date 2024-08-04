@@ -56,3 +56,38 @@ Kafka 설정은 `config/server.properties` 파일을 편집하여 사용자 정�
 `my-topic`이라는 Kafka 토픽을 생성하려면:
 ```bash
 bin/kafka-topics.sh --create --topic my-topic --bootstrap-server server01:9092,server02:9092,server03:9092 --replication-factor 1 --partitions 1
+```
+## Kafka Producer
+Kafka Producer는 Apache Kafka로 데이터를 전송하는 역할을 합니다. 이 프로듀서는 Kafka 클러스터의 브로커에 메시지를 보내어 특정 토픽에 데이터를 게시합니다. 코드 내에서 KafkaProducer 클래스는 다음과 같은 방식으로 사용됩니다:
+
+### 코드 설명
+- KafkaProducer 객체 생성:
+
+```python
+producer = KafkaProducer(
+    bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
+```
+bootstrap_servers: Kafka 브로커의 주소를 지정합니다.
+value_serializer: 데이터를 JSON 형식으로 직렬화하여 바이트로 인코딩합니다.
+- 데이터 전송:
+
+```python
+for item in data:
+    producer.send(KAFKA_TOPIC, item)
+```
+producer.send(KAFKA_TOPIC, item): 각 데이터를 지정된 Kafka 토픽으로 전송합니다.
+- 버퍼 플러시:
+
+```python
+producer.flush()
+```
+producer.flush(): 버퍼에 저장된 모든 메시지를 브로커로 전송하고 확인을 받기 전까지 대기합니다.
+- 주요 포인트
+KafkaProducer: Kafka로 메시지를 전송하는 클라이언트 역할을 합니다.
+bootstrap_servers: Kafka 클러스터의 초기 호스트 목록을 지정합니다.
+value_serializer: 메시지를 직렬화하여 바이트 스트림으로 변환합니다.
+send: 메시지를 비동기적으로 지정된 토픽에 전송합니다.
+flush: 버퍼에 저장된 메시지를 강제로 전송하고 전송이 완료될 때까지 대기합니다.
+이 코드는 주어진 데이터를 Kafka 토픽으로 전송하는 역할을 하며, 데이터가 리스트 형태로 주어져야 함을 가정하고 있습니다. 데이터가 리스트가 아닌 경우 예외를 발생시킵니다.
