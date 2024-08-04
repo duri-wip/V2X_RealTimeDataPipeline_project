@@ -124,29 +124,25 @@
 ```python
 from pyspark.sql.types import StringType, DoubleType, IntegerType, LongType, StructField, StructType, TimestampType
 
-
-carinfo_schema = StructType([
-    StructField("dataId", StringType(), False),              # 데이터ID
-    StructField("trsmDy", IntegerType(), True),              # 패킷전송일
-    StructField("trmnId", StringType(), True),               # 단말기ID
-    StructField("trsmUtcTime", DoubleType(), True),            # 전송UTC시간
-    StructField("trsmYear", StringType(), True),            # 패킷전송년도
-    StructField("trsmMt", StringType(), True),              # 패킷전송월
-    StructField("trsmTm", StringType(), True),              # 패킷전송시간
-    StructField("trsmMs", StringType(), True),                 # 패킷전송밀리초
-    StructField("vhcleLot", DoubleType(), True),             # 차량경도
-    StructField("vhcleLat", DoubleType(), True),             # 차량위도
-    StructField("vhcleEvt", DoubleType(), True),            # 차량고도
-    StructField("trmnTypeCd", StringType(), True),           # 단말기유형코드
-    StructField("gpsUtcTime", DoubleType(), True),             # GPSUTC시간
-    StructField("vhcleDrc", DoubleType(), True),            # 차량방향
-    StructField("vhcleSped", DoubleType(), True),           # 차량속도
-    StructField("trnsmStatCd", StringType(), True),          # 기어상태코드
-    StructField("lcdtRevisnStatCd", StringType(), True),     # 측위보정상태코드
-    StructField("vhcleTypeCd", StringType(), True),          # 차량유형코드
-    StructField("rgtrId", StringType(), True),               # 등록자ID
-    StructField("regDt", TimestampType(), True)              # 등록일시
-])
+car_info_schema_for_json = StructType(
+    [
+        StructField("dataId", StringType(), False),                 # 데이터ID
+        StructField("trsmDy", IntegerType(), True),                 # 패킷전송일
+        StructField("trmnId", StringType(), True),                  # 단말기ID
+        StructField("trsmUtcTime", DoubleType(), True),             # 전송UTC시간
+        StructField("vhcleLot", DoubleType(), True),                # 차량경도
+        StructField("vhcleLat", DoubleType(), True),                # 차량위도
+        StructField("vhcleEvt", DoubleType(), True),                # 차량고도
+        StructField("trmnTypeCd", StringType(), True),              # 단말기유형코드
+        StructField("gpsUtcTime", DoubleType(), True),              # GPSUTC시간
+        StructField("vhcleDrc", DoubleType(), True),                # 차량방향
+        StructField("vhcleSped", DoubleType(), True),               # 차량속도
+        StructField("trnsmStatCd", StringType(), True),             # 기어상태코드
+        StructField("lcdtRevisnStatCd", StringType(), True),        # 측위보정상태코드
+        StructField("vhcleTypeCd", StringType(), True)              # 등록일시
+        StructField("addr", StringType(), True)                     # 시도구
+    ]
+)
 ```
 
 스파크 세션 만들기
@@ -171,38 +167,62 @@ spark.sparkContext.setLogLevel("INFO")
 
 ## 2. 받아온 데이터를 콘솔에 출력하기
 
-스트림데이터를 출력하기 위해서 readStream 객체를 만들어준다.
+### 1. 스파크 세션을 생성한다.
 
 ```python
-car_info_stream = spark.readStream.format("kafka") \
-    .option("kafka.bootstrap.servers", "172.31.10.193:9092") \
-    .option("subscribe", "car_info") \
-    .option("startingOffsets", "latest") \
-    .load()
+def generate_session(app_name: str, **kwargs) -> SparkSession:
+    config = SparkConf()
+    check_point_path = "/home/ubuntu/app/spark-3.5.1-bin-hadoop3/check_point/"
+    context = SparkContext(appName=app_name, conf=config)
+    context.setCheckpointDir(check_point_path)
+    context.setLogLevel(kwargs["log_level"])
+
+    return SparkSession(sparkContext=context) \
+        .builder \
+        .config("spark.jars.packages", kwargs["packages"]) \
+        .getOrCreate()
 ```
 
-위에서 만든 스키마를 읽어온 스트림 데이터에 적용하고 car_info 스키마 안의 모든 열을 읽어온다.
+### 2. 스트림데이터를 출력하기 위해서 readStream 객체를 만들어준다.
 
 ```python
-car_info_df = car_info_stream.select(from_json(col("value").cast("STRING"), carinfo_schema).alias("car_info"))
-car_info_table = car_info_df.select("car_info.*")
+def kafka_stream(spark_session: SparkSession, **kwargs) -> DataFrame:
+    return spark_session.readStream.format("kafka") \
+        .option("kafka.bootstrap.servers", kwargs["servers"]) \
+        .option("subscribe", kwargs["topic"]) \
+        .option("startingOffsets", "latest") \
+        .load()
 ```
 
-콘솔에 출력하기
+### 3. 위에서 만든 스키마를 읽어온 스트림 데이터에 적용하고 car_info 스키마 안의 모든 열을 읽어온다.
 
 ```python
-console_print_stream = car_info_table \
-    .writeStream \
-    .format("console") \
-    .outputMode("append") \
-    .start()
-
-console_print_stream.awaitTermination()
+car_info_table = read_stream.select(
+    from_json(
+        col("value").cast("STRING"),
+        car_info_schema_for_json
+    )
+    .alias("car_info")
+).select("car_info.*")
 ```
 
-## 3. 받아온 데이터를 postgres에 저장하기
+### 4.1 콘솔에 출력하기
 
-postgres 연결 정보
+```python
+def logging_query(df: DataFrame, **kwargs) -> StreamingQuery:
+    return df.writeStream \
+        .format(kwargs["format"]) \
+        .outputMode(kwargs["output"]) \
+        .start()
+
+log_query = logging_query(car_info_table, format="console", output="append")
+
+log_query.awaitTermination()
+```
+
+### 4.2 받아온 데이터를 postgres에 저장하기
+
+1. postgres 연결 정보
 
 ```python
 jdbc_url = "jdbc:postgresql://172.31.10.1:5432/team13"
@@ -215,46 +235,58 @@ properties = {
 table_name = "car_info_table"
 ```
 
-writestream에서 설정된 스키마와 postgres에서 설정된 스키마가 다른 경우 필요한 열을 선택한다.
+2. writestream에서 설정된 스키마와 postgres에서 설정된 스키마가 다른 경우 필요한 열을 선택한다.
 
 ```python
-selected_columns = ["dataId", "trmnId", "vhcleLot", "vhcleLat", "gpsUtcTime", "vhcleSped", "vhcleTypeCd"]
-df_selected = car_info_table.select([col for col in selected_columns])
-
-df_renamed = df_selected \
-    .withColumnRenamed("dataId", "data_id") \
-    .withColumnRenamed("trmnId", "trmncd") \
-    .withColumnRenamed("vhcleLot", "detclot") \
-    .withColumnRenamed("vhcleLat", "detclat") \
-    .withColumnRenamed("gpsUtcTime", "gpsutctime") \
-    .withColumnRenamed("vhcleSped", "vhclesped") \
-    .withColumnRenamed("vhcleTypeCd", "vhcletypecd")
+selected_columns = ["dataId", "trmnId", "vhcleLot", "vhcleLat", "gpsUtcTime", "vhcleSped", "vhcleTypeCd", "addr"]
+renamed_columns = ["data_id", "trmncd", "detclot", "detclat", "gpsutctime", "vhclesped", "vhcletypecd", "addr"]
+selected_df = df.select(
+        [col(selected).alias(renamed) for selected, renamed in zip(selected_columns, renamed_columns)]
+    )
 ```
 
-스트리밍을 시작하고 PostgreSQL에 데이터 쓰기
+3. 스트리밍을 시작하고 PostgreSQL에 데이터 쓰기
 
 ```python
-spark_to_rdbms = df_renamed.writeStream \
-    .foreachBatch(lambda batch_df, batch_id:
-        batch_df.write.jdbc(url=jdbc_url, table=table_name, mode="append", properties=properties)
-    ) \
-    .outputMode("append") \
-    .trigger(processingTime='1 minute') \
-    .start()
+def insert_postgres(df: DataFrame) -> StreamingQuery:
+    return df.writeStream \
+        .foreachBatch(
+            lambda batch_df, batch_id: batch_df.write.jdbc(
+                url=jdbc_url,
+                table=table_name,
+                mode="append",
+                properties=properties
+            )
+        ) \
+        .outputMode("append") \
+        .trigger(processingTime='1 minute') \
+        .start()
 
-spark_to_rdbms.awaitTermination()
+save_query = save_parquet_query(
+    car_info_table,
+    format="parquet",
+    output="append",
+    path="/data/car_info/",
+    check_point="/data/car_info/check_point"
+)
+save_query.awaitTermination()
 ```
 
-## 4. 받아온 데이터를 HDFS에 저장하기
+### 4.3 받아온 데이터를 HDFS에 저장하기
 
 ```python
-spark_to_hdfs = car_info_table.writeStream \
-    .format("parquet") \
-    .outputMode("append") \
-    .option("path", "/data/car_info/") \
-    .option("checkpointLocation", "/data/car_info/check_point") \
-    .trigger(processingTime = '5 seconds') \
-    .start()
+def save_parquet_query(df: DataFrame, **kwargs) -> StreamingQuery:
+    time = datetime.datetime.now()
+    temp_date_str = time.strftime("%y%m%d")
 
-spark_to_hdfs.awaitTermination()
+    return df.writeStream \
+        .format(kwargs["format"]) \
+        .outputMode(kwargs["output"]) \
+        .option("path", kwargs["path"] + temp_date_str) \
+        .option("checkpointLocation", kwargs["check_point"]) \
+        .trigger(processingTime='1 minutes') \
+        .start()
+
+insert_query = insert_postgres(car_info_table)
+insert_query.awaitTermination()
 ```
