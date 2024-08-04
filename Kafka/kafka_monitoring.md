@@ -28,6 +28,7 @@ _Kafka Cluster Monitoring Dashboard_
 	- 클러스터에서 현재 활성 상태인 컨트롤러의 수
 	- 컨트롤러는 클러스터 메타데이터의 변경을 관리 역할
 	- 일반적으로 1개의 컨트롤러가 활성화
+
 ![|350](https://i.imgur.com/5T9yCBy.png)
 
 - Leader count
@@ -91,6 +92,7 @@ _Kafka Cluster Monitoring Dashboard_
 - Zookeeper up status
 	- Zookeeper 서버의 상태를 모니터링
 	- 서버의 정상 작동  여부 확인
+
 ![|400](https://i.imgur.com/gNQ6wzs.png)
 
 - Active connections count
