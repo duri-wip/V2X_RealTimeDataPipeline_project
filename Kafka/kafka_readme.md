@@ -43,7 +43,7 @@ Kafka 설정은 `config/server.properties` 파일을 편집하여 사용자 정�
 
 - **로그 디렉터리**:
     ```properties
-    log.dirs=/tmp/kafka-logs
+    log.dirs=/app/kafka-logs
     ```
 
 - **ZooKeeper 연결**:
