@@ -2,11 +2,11 @@
 이 DAG는 TDATA API에서 차량 위치 데이터를 가져와 Kakao API를 사용해 주소 정보를 업데이트하고, 처리된 데이터를 Kafka 토픽으로 전송합니다. 비동기 처리를 활용해 API 호출 성능을 최적화합니다.
 
 ## 필수 조건
-Apache Airflow
+Apache Airflow : 2.9.3 버전 사용
 
-Kafka
+Kafka: 2.13 버전 사용
 
-Python 3.8 이상
+Python 3.8 이상 : 3.11.9 버전 사용
 
 ### 필요한 Python 패키지: requests, aiohttp, kafka-python
 
