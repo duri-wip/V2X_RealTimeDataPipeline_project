@@ -26,3 +26,4 @@ airflow, 카프카, 스파크, hdfs, postgres 를 이용하여 실시간 데이�
 |postgresql|42.7.3| 
 |spark|3.5.1|
 |kafka|2.13|
+|airflow|2.9.3|
