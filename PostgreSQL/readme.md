@@ -57,19 +57,19 @@ CREATE ROLE 유저이름 WITH REPLICATION LOGIN PASSWORD '비밀번호';
     - trigger_file = '/tmp/postgresql.trigger'
 ## 서비스 시작 및 확인
 - **PostgreSQL 서비스 시작**: 메인 서버와 스탠바이 서버에서 PostgreSQL 서비스를 시작합니다.
-```
-sudo systemctl start postgresql
-```
+  ```
+  sudo systemctl start postgresql
+  ```
 - **이중화 상태 확인**: psql을 사용하여 메인 서버와 스탠바이 서버의 이중화 상태를 확인할 수 있습니다.
 - **리플리케이션 확인** 
   - 메인 서버
-```
-     SELECT * FROM pg_stat_replication;
-```
+  ```
+  SELECT * FROM pg_stat_replication;
+  ```
   - 스탠바이 서버
-```
-    SELECT * FROM pg_stat_wal_receiver;
-```
+  ```
+  SELECT * FROM pg_stat_wal_receiver;
+  ```
 ---------------------------------------------------------------------------------------------
 # 이중화 구현 시 replication slot의 사용
 PostgreSQL에서 replication slot은 스탠바이 서버가 메인 서버로부터 데이터를 복제받기 위해 사용하는 메커니즘입니다. replication slot을 사용하면 스탠바이 서버가 일시적으로 연결이 끊겼다가 다시 연결되더라도, 누락된 데이터 없이 복제를 계속 진행할 수 있습니다. 하지만, 필요하지 않게 된 replication slot은 시스템 리소스를 낭비할 수 있으므로 초기화하여 사용하는 것이 좋습니다.
@@ -90,9 +90,9 @@ PostgreSQL에서 replication slot은 스탠바이 서버가 메인 서버로부�
    ```
 2. **replication slot 삭제**
    더 이상 필요하지 않은 replication slot을 확인했다면, 해당 slot을 삭제할 수 있습니다. 이 작업 역시 메인 서버에서 수행합니다.
-  ```
-  SELECT pg_drop_replication_slot('slot_name');
-  ``` 
+    ```
+    SELECT pg_drop_replication_slot('slot_name');
+    ``` 
 ### 주의사항
 - replication slot을 삭제하기 전에, 해당 slot을 사용하는 스탠바이 서버가 더 이상 해당 slot을 사용하지 않거나, 서비스에 영향을 주지 않는지 확인해야 합니다.
 - replication slot을 삭제하면 해당 slot에 대한 정보와 스탠바이 서버가 복제해야 할 WAL 파일 정보가 삭제됩니다. 따라서, 스탠바이 서버가 해당 slot을 여전히 필요로 한다면, 데이터 복제에 문제가 발생할 수 있습니다.
