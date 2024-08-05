@@ -46,6 +46,7 @@ cp: cannot create regular file '/var/lib/postgresql/16/archive/00000001000000000
 2024-08-01 17:23:05.525 KST [56690] DETAIL: The failed archive command was: cp pg_wal/000000010000000000000001 /var/lib/postgresql/16/archive/000000010000000000000001
 ~~~
 권한이 없다고 해서 /tmp로 폴더를 옮겼다.
++) /tmp가 무슨 폴더인지 몰라서 넣었더니 다음 날 아카이브 디렉토리가 지워졌다. /var/lib/postgresql/archive로 변경
 
 
 ### 에러 3
