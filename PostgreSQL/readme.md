@@ -27,7 +27,7 @@ CREATE ROLE 유저이름 WITH REPLICATION LOGIN PASSWORD '비밀번호';
       ```
     - 이 명령어는 /home/ubuntu 디렉토리의 소유권을 postgres 사용자와 그룹에게 부여하고, 소유자만 읽기, 쓰기, 실행 권한을 가지도록 설정합니다.
       ```
-     sudo chmod 700 아카이브 파일 경로
+      sudo chmod 700 아카이브 파일 경로
       ```
 - **pg_hba.conf 수정**: 메인 서버의 pg_hba.conf 파일을 열고, 스탠바이 서버의 접속을 허용하는 규칙을 추가합니다.
   ```
