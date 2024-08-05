@@ -5,6 +5,21 @@
 ### 환경 설정
 - PostgreSQL 설치: 이중화를 구성할 모든 서버에 PostgreSQL을 설치합니다.
 - 네트워크 설정: 이중화할 서버들이 서로 통신할 수 있도록 네트워크 설정을 확인합니다.
+- DB, TABLE 생성
+  ~~~
+  CREATE DATABASE team13;
+
+  CREATE TABLE car_info_table (
+      DATA_ID VARCHAR(255) PRIMARY KEY,
+      trmnCd VARCHAR(50),
+      detcLot DOUBLE PRECISION,
+      detcLat DOUBLE PRECISION,
+      gpsUtcTime BIGINT,
+      vhcleSped INTEGER,
+      vhcleTypeCd VARCHAR(4),
+      addr VARCHAR(30)
+  );
+  ~~~
 ## 설정
 ### 1. 복제 사용자 생성
 메인 서버에서 PostgreSQL의 psql 명령어 인터페이스를 사용하여 복제 사용자를 생성합니다.
