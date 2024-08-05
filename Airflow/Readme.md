@@ -13,7 +13,7 @@ Python 3.8 이상 : 3.11.9
 ## Kafka 설정
 Kafka 설정이 올바르게 구성되었는지 확인하기 위해 kafka 부트스트랩 서버와 토픽을 업데이트합니다.
 
-```
+```bash
 KAFKA_BOOTSTRAP_SERVERS = 'server01:9092,server02:9092,server03:9092'
 KAFKA_TOPIC = 'car_info'
 ```
@@ -26,14 +26,14 @@ API 키는 Airflow Variable로 관리합니다.
 
 Airflow CLI를 사용해 설정하는 법 : 
 
-```
+```bash
 airflow variables -s tdata_apikey YOUR_TDATA_API_KEY
 airflow variables -s kakao_rest_api_key YOUR_KAKAO_API_KEY
 ```
 
 ## DAG 정의
 주소 데이터를 가져와 업데이트한 뒤 Kafka로 전송하는 두 가지 주요 작업으로 구성된 DAG를 15분 주기로 실행하도록 설정합니다.
-```
+```python
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
@@ -68,7 +68,7 @@ dag = DAG(
 ### 비동기 주소 가져오기
 Kakao API를 비동기적으로 호출해 주소를 가져옵니다.
 
-```
+```python
 async def fetch_address(session, lat, lng, retries=3):
     url = f"https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x={lng}&y={lat}"
     headers = {"Authorization": f"KakaoAK {KAKAO_API_KEY}"}
@@ -86,7 +86,7 @@ async def fetch_address(session, lat, lng, retries=3):
 ### 주소정보 업데이트
 TDATA API에서 가져온 데이터의 주소 정보를 업데이트합니다.
 
-```
+```python
 async def update_address(tdata_json):
     async with aiohttp.ClientSession() as session:
         tasks = []
@@ -126,7 +126,7 @@ async def update_address(tdata_json):
 
 TDATA API에서 데이터를 가져와 Kakao API를 사용해 주소를 업데이트합니다.
 
-```
+```python
 def fetch_and_update_address():
     response = requests.get(tdata_url)
     response.raise_for_status()
@@ -139,7 +139,7 @@ def fetch_and_update_address():
 ### 데이터를 Kafka로 전송
 업데이트된 데이터를 Kafka 토픽으로 전송합니다.
 
-```
+```python
 def send_to_kafka(**kwargs):
     data = kwargs['ti'].xcom_pull(task_ids='fetch_and_update_address')
     if isinstance(data, list):
@@ -156,7 +156,7 @@ def send_to_kafka(**kwargs):
 ```
 ### 작업 정의
 PythonOperator를 사용해 작업을 정의합니다.
-```
+```python
 fetch_and_update_task = PythonOperator(
     task_id='fetch_and_update_address',
     python_callable=fetch_and_update_address,
@@ -214,7 +214,7 @@ fetch_and_update_task >> send_to_kafka_task
 - 설정 파일 자체가 문서 역할을 합니다.
 
 ### Airflow CLI 명령어 : 변수를 설정하고 관리하는 명령어
-```
+```python
 # 변수 설정
 airflow variables -s <KEY> <VALUE>
 
@@ -229,7 +229,7 @@ airflow variables -l
 
 ```
 ### Dag 관련 다양한  명령어 
-```
+```python
 #DAG를 실행
 airflow dags trigger example_dag
 
