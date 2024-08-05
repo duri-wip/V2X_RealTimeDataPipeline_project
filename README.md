@@ -1,5 +1,3 @@
-# data_plumber
-
 ## 개요
 
 airflow, 카프카, 스파크, hdfs, postgres 를 이용하여 실시간 데이터스트림 처리 파이프라인 구축하기
