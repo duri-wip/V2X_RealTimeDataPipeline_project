@@ -2,16 +2,16 @@
 이 DAG는 TDATA API에서 차량 위치 데이터를 가져와 Kakao API를 사용해 주소 정보를 업데이트하고, 처리된 데이터를 Kafka 토픽으로 전송합니다. 비동기 처리를 활용해 API 호출 성능을 최적화합니다.
 
 ## 필수 조건
-Apache Airflow : 2.9.3 버전 사용
+Apache Airflow : 2.9.3
 
-Kafka: 2.13 버전 사용
+Kafka: 2.13
 
-Python 3.8 이상 : 3.11.9 버전 사용
+Python 3.8 이상 : 3.11.9
 
 ### 필요한 Python 패키지: requests, aiohttp, kafka-python
 
 ## Kafka 설정
-Kafka 설정이 올바르게 구성되었는지 확인합니다. 코드에서 Kafka 부트스트랩 서버와 토픽을 업데이트하세요:
+Kafka 설정이 올바르게 구성되었는지 확인하기 위해 kafka 부트스트랩 서버와 토픽을 업데이트합니다.
 
 ```
 KAFKA_BOOTSTRAP_SERVERS = 'server01:9092,server02:9092,server03:9092'
@@ -19,11 +19,12 @@ KAFKA_TOPIC = 'car_info'
 ```
 
 ## API 키 관리
-API 키는 Airflow Variable로 관리합니다. 다음 Airflow Variable를 설정하세요:
+API 키는 Airflow Variable로 관리합니다.
 
 - tdata_apikey: TDATA API 키
 - kakao_rest_api_key: Kakao API 키
-Airflow CLI를 사용해 Airflow Variable을 설정할 수 있습니다:
+
+Airflow CLI를 사용해 설정하는 법 : 
 
 ```
 airflow variables -s tdata_apikey YOUR_TDATA_API_KEY
@@ -31,7 +32,7 @@ airflow variables -s kakao_rest_api_key YOUR_KAKAO_API_KEY
 ```
 
 ## DAG 정의
-이 DAG는 15분마다 실행되며, 주소 데이터를 가져와 업데이트한 뒤 Kafka로 전송하는 두 가지 주요 작업으로 구성됩니다.
+주소 데이터를 가져와 업데이트한 뒤 Kafka로 전송하는 두 가지 주요 작업으로 구성된 DAG를 15분 주기로 실행하도록 설정합니다.
 ```
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -125,7 +126,6 @@ async def update_address(tdata_json):
 
 TDATA API에서 데이터를 가져와 Kakao API를 사용해 주소를 업데이트합니다.
 
-
 ```
 def fetch_and_update_address():
     response = requests.get(tdata_url)
@@ -179,40 +179,29 @@ fetch_and_update_task >> send_to_kafka_task
 ### XCom 활용 시 장점
 
 1. 태스크 간 데이터 공유:
-
-- 각 태스크가 독립적으로 실행될 수 있지만, XCom을 통해 필요한 데이터를 공유함으로써 태스크 간의 협력과 데이터 의존성을 관리할 수 있습니다.
-2. 유연한 데이터 전달:
-
+- 각 태스크를 독립적으로 실행하면서도 XCom을 통해 필요한 데이터를 공유하여 태스크 간의 협력과 데이터 의존성을 관리할 수 있습니다.
+3. 유연한 데이터 전달:
 - XCom을 사용하면 데이터 파이프라인에서 특정 태스크의 출력을 다른 태스크의 입력으로 쉽게 사용할 수 있어, 복잡한 데이터 흐름을 유연하게 구성할 수 있습니다.
-3. 코드 재사용성 증가:
-
+4. 코드 재사용성 증가:
 - XCom을 활용하면 공통 데이터를 재사용하는 여러 태스크를 보다 간단하게 구성할 수 있어, 코드의 중복을 줄이고 재사용성을 높일 수 있습니다.
 4. 작업 상태 및 결과 관리:
-
 - 태스크의 중간 결과나 상태를 저장하고 다른 태스크에서 이를 참조함으로써, 데이터 처리의 각 단계를 보다 명확하게 관리하고 모니터링할 수 있습니다.
-- 
+  
 ### 중요 고려사항
 
 1. 데이터 크기 제한:
-
-- XCom은 메타데이터 데이터베이스에 저장되기 때문에 큰 데이터를 저장하기 적합하지 않습니다. 대신 파일 경로 또는 데이터베이스 레코드 ID와 같은 참조를 저장하세요.
+- XCom은 메타데이터 데이터베이스에 저장되기 때문에 큰 데이터를 저장하기 적합하지 않습니다. 큰 데이터를 저장하기 위해서는 파일 경로 또는 데이터베이스 레코드 ID와 같은 참조를 이용해야 합니다.
 2. 데이터 보안:
-
-- XCom에 민감한 정보를 저장하는 것은 피하세요. 데이터베이스에 저장되기 때문에 접근할 수 있습니다.
+- XCom은 데이터를 데이터베이스에 저장하기 때문에 민감한 정보를 저장하면 보안이 위험할 수 있습니다.
 3. XCom 키 관리:
-
-- 데이터를 저장할 때 명시적으로 키를 설정해 나중에 데이터를 쉽게 검색할 수 있도록 합니다. 기본 키를 사용하면 데이터 충돌이 발생할 수 있습니다.
+- 기본 키를 사용하면 데이터 충돌이 일어날 수 있으므로 데이터를 저장할 때 명시적으로 키를 설정해 나중에 데이터를 쉽게 검색할 수 있도록 해야합니다.
 4. 성능 문제:
-
 - XCom을 과도하게 사용하면 메타데이터 데이터베이스 성능에 영향을 미칠 수 있습니다.
 5. 의존성 관리:
+- XCom은 DAG 내에서 작업 간 데이터 의존성을 관리하는 데 유용하지만, 복잡한 의존성을 만들지 않도록 주의해야합니다.
 
-- XCom은 DAG 내에서 작업 간 데이터 의존성을 관리하는 데 유용하지만, 복잡한 의존성을 만들지 않도록 주의하세요.
-
-## 코드로서의 설정 (Configuration as Code)
+## Configuration as Code
 ### 이점
-
-
 1. 버전 관리:
 - Git과 같은 버전 관리 시스템을 통해 변경 사항을 추적할 수 있습니다.
 2. 재현성:
@@ -224,9 +213,7 @@ fetch_and_update_task >> send_to_kafka_task
 5. 문서화:
 - 설정 파일 자체가 문서 역할을 합니다.
 
-### Airflow CLI 명령어
-
-변수를 설정하고 관리하는 명령어:
+### Airflow CLI 명령어 : 변수를 설정하고 관리하는 명령어
 ```
 # 변수 설정
 airflow variables -s <KEY> <VALUE>
@@ -241,7 +228,7 @@ airflow variables -x <KEY>
 airflow variables -l
 
 ```
-### Dag 관련 다양한  명령어 :
+### Dag 관련 다양한  명령어 
 ```
 #DAG를 실행
 airflow dags trigger example_dag
@@ -280,10 +267,4 @@ airflow dags list-runs -d <dag_id>
 장점: 병렬 처리를 통해 대량의 API 호출을 효율적으로 처리할 수 있습니다.
 
 ### 결론
-대규모 API 호출을 처리할 때는 aiohttp와 asyncio를 활용한 비동기 처리가 동기 처리에 비해 훨씬 효율적입니다.
-
-비동기 처리시, API 서버에 응답 시간에 따라 delay를 주어야 하는 경우도 고려해야 합니다.
-
-짧은 시간동안 많은 요청을 할 시 정상적인 응답을 못 받는 경우가 있습니다.
-
-해당 고려사항들에 대한 조치를 할 경우, 비동기 처리를 통해 전체 처리 시간을 크게 줄일 수 있습니다. 그리고 성능을 향상시킬 수 있습니다.
+대규모 API 호출을 처리할 때는 aiohttp와 asyncio를 활용한 비동기 처리가 동기 처리에 비해 훨씬 효율적입니다.비동기 처리시, API 서버에 응답 시간에 따라 delay를 주어야 하는 경우도 고려해야 하고, 짧은 시간동안 많은 요청을 할 시에 정상적인 응답을 못받는 경우가 있지만 위 사항에 대한 조치를 할 경우 비동기 처리를 통해 처리 시간을 줄이고 성능을 향상시킬 수 있습니다.
