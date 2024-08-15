@@ -1,6 +1,7 @@
 ## 개요
-
-airflow, 카프카, 스파크, hdfs, postgres 를 이용하여 실시간 데이터스트림 처리 파이프라인 구축하기
+- V2X 시스템에서 생성되는 실시간 데이터 처리 파이프라인 구축
+- 자율 주행 차량 분석 플랫폼 구축
+- Airflow, Kafka, Spark, HDFS, PostgreSQL
 
 ### 프로젝트 소개
 
@@ -17,11 +18,12 @@ airflow, 카프카, 스파크, hdfs, postgres 를 이용하여 실시간 데이�
 
 
 ### 사용 기술 및 환경
+**링크를 통해서 자세한 내용을 확인할 수 있습니다.**
 
 |기술명|버전정보|
 |--------|-------|
-|Hadoop|3.3.6|
-|postgresql|16.3| 
-|spark|3.5.1|
-|kafka|2.13|
-|airflow|2.9.3|
+|[Hadoop & HDFS](https://github.com/leegyoungmin/data_plumber13/tree/master/hadoop%20hdfs)|3.3.6|
+|[PostgreSQL](https://github.com/leegyoungmin/data_plumber13/tree/master/PostgreSQL)|16.3| 
+|[Spark](https://github.com/leegyoungmin/data_plumber13/tree/master/Spark)|3.5.1|
+|[Kafka](https://github.com/leegyoungmin/data_plumber13/tree/master/Kafka)|2.13|
+|[Airflow](https://github.com/leegyoungmin/data_plumber13/tree/master/Airflow)|2.9.3|
